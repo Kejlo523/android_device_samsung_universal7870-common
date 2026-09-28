@@ -40,13 +40,15 @@ TARGET_IGNORES_FTP_PPTP_CONNTRACK_FAILURE := true
 # Firmware
 TARGET_NO_BOOTLOADER := true
 TARGET_NO_RADIOIMAGE := true
+AB_OTA_UPDATER := false
 
 # Platform
 BOARD_VENDOR := samsung
 TARGET_BOOTLOADER_BOARD_NAME := exynos7870
 TARGET_BOARD_PLATFORM := universal7870
 TARGET_SOC := exynos7870
-include hardware/samsung_slsi-linaro/config/BoardConfig7870.mk
+BOARD_USES_EXYNOS_GRALLOC_VERSION := 3
+include hardware/samsung_slsi-linaro/config7870/BoardConfig7870.mk
 
 # Architecture
 TARGET_ARCH := arm64
@@ -65,7 +67,6 @@ TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a53
 
 # Binder
 TARGET_BOARD_SUFFIX := _64
-TARGET_USES_64_BIT_BINDER := true
 BUILD_BROKEN_DUP_RULES := true
 BUILD_BROKEN_USES_BUILD_COPY_HEADERS := true
 
@@ -79,7 +80,13 @@ BOARD_KERNEL_IMAGE_NAME := Image
 BOARD_KERNEL_SEPARATED_DT := true
 TARGET_CUSTOM_DTBTOOL := dtbhtoolExynos
 
+KERNEL_GCC_49 := $(abspath prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-)
+KERNEL_CROSS_COMPILE := CROSS_COMPILE=$(KERNEL_GCC_49)
+KERNEL_CC := CC="$(KERNEL_GCC_49)gcc" LD="$(KERNEL_GCC_49)ld"
+
 TARGET_KERNEL_ADDITIONAL_FLAGS := \
+    HOSTCC=clang \
+    HOSTCXX=clang++ \
     HOSTCFLAGS="-fuse-ld=lld -Wno-unused-command-line-argument"
 
 # Kernel
@@ -91,7 +98,13 @@ TARGET_KERNEL_CLANG_COMPILE := false
 # Kernel config
 TARGET_KERNEL_SOURCE := kernel/samsung/exynos7870
 
+# USB gadget controller exposed by the Exynos 7870 DT.
+$(call soong_config_set,samsungUsbGadgetVars,gadget_name,13600000.dwc3)
+
 # HIDL
+DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE += \
+    $(LOCAL_PATH)/configs/framework_compatibility_matrix.xml \
+    hardware/samsung/vintf/samsung_framework_compatibility_matrix.xml
 DEVICE_MATRIX_FILE := $(LOCAL_PATH)/configs/compatibility_matrix.xml
 PRODUCT_ENFORCE_VINTF_MANIFEST_OVERRIDE := true
 
@@ -103,12 +116,12 @@ TARGET_FS_CONFIG_GEN := $(LOCAL_PATH)/config.fs
 
 # Partitions
 BOARD_BOOTIMAGE_PARTITION_SIZE := 33554432
-BOARD_CACHEIMAGE_PARTITION_SIZE := 209715200
+BOARD_CACHEIMAGE_PARTITION_SIZE := 314572800
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 39845888
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 2871279104
-BOARD_USERDATAIMAGE_PARTITION_SIZE := 54618209280
-BOARD_VENDORIMAGE_PARTITION_SIZE := 434596224
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 4194304000
+BOARD_USERDATAIMAGE_PARTITION_SIZE := 25153241088
+BOARD_VENDORIMAGE_PARTITION_SIZE := 629145600
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_FLASH_BLOCK_SIZE := 4096
 TARGET_USERIMAGES_USE_EXT4 := true
@@ -183,6 +196,7 @@ BOARD_SECCOMP_POLICY := $(LOCAL_PATH)/seccomp
 # BOARD_SEPOLICY_TEE_FLAVOR := mobicore
 # only needed by livedisplay wich is labled inline
 # include device/lineage/sepolicy/exynos/sepolicy.mk
+include device/lineage/sepolicy/libperfmgr/sepolicy.mk
 include device/samsung/universal7870-common/sepolicy_slsi_exynos7870/sepolicy.mk
 BOARD_SEPOLICY_DIRS += $(LOCAL_PATH)/sepolicy/vendor
 
@@ -201,3 +215,4 @@ TARGET_LD_SHIM_LIBS += \
 
 # Wifi
 BOARD_HAVE_SAMSUNG_WIFI := true
+WIFI_HIDL_UNIFIED_SUPPLICANT_SERVICE_RC_ENTRY := true

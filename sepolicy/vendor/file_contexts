@@ -1,6 +1,7 @@
 ##########################
 # Devices
 #
+/dev/ion                    u:object_r:ion_device:s0
 /dev/mali[0-9]*              u:object_r:gpu_device:s0
 
 /dev/bcm2079x                u:object_r:nfc_device:s0
@@ -208,6 +209,8 @@
 /sys/devices/virtual/camera/flash/rear_torch_flash(/.*)? u:object_r:sysfs_virtual:s0
 
 # virtual
+/sys/devices/virtual/sec                     u:object_r:sysfs_sec_key:s0
+/sys/devices/virtual/sec/sec_key(/.*)? u:object_r:sysfs_sec_key:s0
 /sys/devices/virtual(/.*)?    u:object_r:sysfs_virtual:s0
 
 # fingerprint
@@ -227,10 +230,11 @@
 /(vendor|system/vendor)/bin/hw/vendor\.lineage\.livedisplay@2\.1-service\.universal7870   u:object_r:hal_lineage_livedisplay_exynos_exec:s0
 /(vendor|system/vendor)/bin/hw/android\.hardware\.light-service\.samsung u:object_r:hal_light_default_exec:s0
 /(vendor|system/vendor)/bin/hw/android\.hardware\.sensors@1\.0-service\.universal7870                u:object_r:hal_sensors_default_exec:s0
-/(vendor|system/vendor)/bin/hw/vendor\.lineage\.fastcharge@1\.0-service\.samsung u:object_r:hal_lineage_fastcharge_default_exec:s0
 /(vendor|system/vendor)/bin/hw/vendor\.lineage\.touch\@1\.0-service\.exynos7870                u:object_r:hal_lineage_touch_default_exec:s0
 /(vendor|system/vendor)/bin/hw/android\.hardware\.bluetooth@1\.0-service-qti         u:object_r:hal_bluetooth_default_exec:s0
 /(vendor|system/vendor)/bin/hw/android\.hardware\.gatekeeper@1\.0-service\.software u:object_r:hal_gatekeeper_default_exec:s0
+/(vendor|system/vendor)/bin/hw/android\.hardware\.graphics\.composer@2\.1-service\.universal7870 u:object_r:hal_graphics_composer_default_exec:s0
+/(vendor|system/vendor)/bin/hw/android\.hardware\.power-service\.pixel-libperfmgr u:object_r:hal_power_default_exec:s0
 
 /(vendor|system/vendor)/bin/hw/android\.hardware\.biometrics\.fingerprint@[0-9].[0-9]-service\.a3y17lte    u:object_r:hal_fingerprint_default_exec:s0
 /(vendor|system/vendor)/bin/hw/android\.hardware\.biometrics\.fingerprint@[0-9].[0-9]-service\.j5y17lte    u:object_r:hal_fingerprint_default_exec:s0

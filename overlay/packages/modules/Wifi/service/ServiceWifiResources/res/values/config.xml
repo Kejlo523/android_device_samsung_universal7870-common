@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        The legacy Exynos 7870 Wi-Fi HAL does not implement link-layer
+        statistics. Avoid waking the framework and HAL every three seconds
+        just to receive ERROR_NOT_SUPPORTED.
+    -->
+    <integer translatable="false" name="config_wifiPollRssiIntervalMilliseconds">30000</integer>
+    <integer translatable="false" name="config_wifiPollRssiLongIntervalMilliseconds">60000</integer>
+    <bool translatable="false" name="config_wifiAdjustPollRssiIntervalEnabled">false</bool>
+</resources>

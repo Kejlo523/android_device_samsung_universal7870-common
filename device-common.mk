@@ -26,8 +26,8 @@ PRODUCT_SOONG_NAMESPACES += \
     hardware/lineage/compat \
     vendor/samsung/universal7870-common
 
-# Disable Ranging (UWB) - not supported on exynos7870, fixes A15 build
-RELEASE_RANGING_STACK := false
+# Android 17 owns RELEASE_RANGING_STACK in the release configuration.  UWB is
+# not advertised by this device tree, so no product-side override is needed.
 
 # Product Characteristics
 PRODUCT_CHARACTERISTICS := phone
@@ -121,7 +121,9 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/audio/audio_policy_configuration_oss.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_policy_configuration.xml
 else
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/audio/audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_policy_configuration.xml
+    $(LOCAL_PATH)/configs/audio/audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_policy_configuration.xml \
+    $(LOCAL_PATH)/rootdir/etc/zz_audio_rild_compat.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/zz_audio_rild_compat.rc \
+    $(LOCAL_PATH)/rootdir/etc/zz_audio_rild_sync.rc:$(TARGET_COPY_OUT_SYSTEM)/etc/init/zz_audio_rild_sync.rc
 endif
 
 #ifeq ($(TARGET_DEVICE_HAS_OSS_AUDIO_HAL),true)
@@ -222,7 +224,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.graphics.allocator@2.0-impl \
     android.hardware.graphics.allocator@2.0-service  \
-    android.hardware.graphics.composer@2.2-service  \
+    android.hardware.graphics.composer@2.1-service.universal7870 \
     android.hardware.graphics.mapper@2.0-impl-2.1 \
     android.hardware.renderscript@1.0-impl \
     gralloc.exynos7870 \
@@ -234,8 +236,6 @@ PRODUCT_PACKAGES += \
 
 # Memtrack
 PRODUCT_PACKAGES += \
-    android.hardware.memtrack@1.0-impl \
-    android.hardware.memtrack@1.0-service \
     memtrack.exynos7870
 
 # VNDK prebuilts
@@ -268,20 +268,16 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Flat device tree for boot image
 PRODUCT_HOST_PACKAGES += \
-    dtbhtoolExynos
+    dtbhtoolExynos \
+    mkdtbhbootimg
 
 # OMX
 PRODUCT_PACKAGES += \
     android.hardware.media.omx@1.0-service \
     libstagefright_omx
 
-# FastCharge
-PRODUCT_PACKAGES += \
-    vendor.lineage.fastcharge@1.0-service.samsung
-
 # Touch features
-PRODUCT_PACKAGES += \
-    vendor.lineage.touch@1.0-service.exynos7870
+# Legacy vendor.lineage.touch HIDL is not part of Android 17.
 
 # FlipFlap
 PRODUCT_PACKAGES += \
@@ -300,9 +296,12 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.power-service.pixel-libperfmgr
 
-# Configstore
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/power/powerhint.json:$(TARGET_COPY_OUT_VENDOR)/etc/powerhint.json
+
+# Configstore was removed from the platform; legacy vendor processes still use
+# vndservicemanager for their remaining HIDL services.
 PRODUCT_PACKAGES += \
-    android.hardware.configstore@1.1-service \
     vndservicemanager
 
 # Health - AIDL for Android 15
@@ -332,13 +331,8 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.light-service.samsung
 
-# VNDK
-PRODUCT_COPY_FILES += \
-    prebuilts/vndk/v30/arm/arch-arm-armv7-a-neon/shared/vndk-core/android.hardware.light-V1-ndk_platform.so:$(TARGET_COPY_OUT_VENDOR)/lib/android.hardware.light-V1-ndk_platform.so
-
 # LiveDisplay
-PRODUCT_PACKAGES += \
-    vendor.lineage.livedisplay@2.1-service.universal7870
+# Legacy vendor.lineage.livedisplay HIDL is not part of Android 17.
 
 # OpenMAX IL configuration files
 PRODUCT_COPY_FILES += \
@@ -373,7 +367,8 @@ PRODUCT_PACKAGES += \
     android.hardware.radio.config@1.2.vendor \
     android.hardware.radio.deprecated@1.0.vendor \
     cbd \
-    libcutils_shim_vendor
+    libcutils_shim_vendor \
+    libsqlite.vendor
 
 PRODUCT_PACKAGES += \
     libprotobuf-cpp-full-vendorcompat \
@@ -383,7 +378,7 @@ PRODUCT_PACKAGES += \
 # Filesystem tools for resizing system partitions
 PRODUCT_PACKAGES += \
     e2fsck_static \
-    resize2fs_static
+    resize2fs
 
 # Ramdisk
 PRODUCT_PACKAGES += \
@@ -395,6 +390,16 @@ PRODUCT_PACKAGES += \
     ueventd.samsungexynos7870.rc \
     init.vendor.rilchip.rc \
     init.vendor.rilcommon.rc
+
+# First-stage init runs before /vendor is available. Keep the same fstab in
+# the boot ramdisk so it can mount the system-as-root and vendor partitions.
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/rootdir/etc/fstab.samsungexynos7870:$(TARGET_COPY_OUT_RAMDISK)/fstab.samsungexynos7870
+
+# The Exynos 7870 kernel exposes the legacy android_usb gadget rather than
+# USB gadget configfs. Recovery init scripts are kept in the recovery root.
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/rootdir/etc/init.recovery.samsungexynos7870.rc:$(TARGET_COPY_OUT_RECOVERY)/root/init.recovery.samsungexynos7870.rc
 
 # Recorder
 PRODUCT_PACKAGES += \
@@ -440,8 +445,7 @@ PRODUCT_PACKAGES += \
 
 # Vibrator
 PRODUCT_PACKAGES += \
-    android.hardware.vibrator@1.0-impl \
-    android.hardware.vibrator@1.0-service
+    android.hardware.vibrator-service.samsung
 
 # Vendor security patch level
 PRODUCT_PROPERTY_OVERRIDES += \

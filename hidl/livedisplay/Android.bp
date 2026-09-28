@@ -14,6 +14,9 @@
 
 cc_binary {
     name: "vendor.lineage.livedisplay@2.1-service.universal7870",
+    // LiveDisplay's legacy vendor HIDL interfaces no longer exist in the
+    // Android 17 platform.  Disable this optional service for bring-up.
+    enabled: false,
     defaults: ["hidl_defaults"],
     relative_install_path: "hw",
     init_rc: ["vendor.lineage.livedisplay@2.1-service.universal7870.rc"],

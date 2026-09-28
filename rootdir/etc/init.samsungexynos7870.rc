@@ -81,6 +81,11 @@ on post-fs-data
     mkdir /data/system/yas_lib 0770 system system
 
 on boot
+    # Pixel libperfmgr defers its node worker until the device init sequence
+    # declares sysfs permissions ready.  Without this, all power hints remain
+    # queued and DT2W never reaches the touchscreen driver.
+    setprop vendor.powerhal.init 1
+
     # override init.rc to keep plenty of large order chunks around
     # to improve allocation times
 #    write /proc/sys/vm/min_free_kbytes 32768

@@ -14,6 +14,10 @@
 
 cc_binary {
     name: "vendor.lineage.touch@1.0-service.exynos7870",
+    // The legacy Lineage touch HIDL interface was removed before Android 17.
+    // Keep the implementation in-tree for a later AIDL port, but do not
+    // instantiate it in the bring-up build.
+    enabled: false,
     init_rc: ["vendor.lineage.touch@1.0-service.exynos7870.rc"],
     vintf_fragments:["vendor.lineage.touch@1.0-service.exynos7870.xml"],
     defaults: ["hidl_defaults"],

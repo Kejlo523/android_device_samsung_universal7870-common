@@ -45,6 +45,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Graphics
 PRODUCT_PROPERTY_OVERRIDES += \
+    ro.hardware.egl=mali \
     ro.opengles.version=196610 \
     debug.hwc.skip_dma_types=0,2 \
     debug.renderengine.backend=gles
@@ -91,7 +92,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # OMX
 PRODUCT_PROPERTY_OVERRIDES += \
-    debug.stagefright.ccodec=0 \
+    debug.stagefright.ccodec=1 \
     media.stagefright.legacyencoder=true
 
 # mediacodec cameraserver race workaround
@@ -99,14 +100,23 @@ PRODUCT_PROPERTY_OVERRIDES += \
     debug.fdsan=warn_once
 
 # Bpf
-PRODUCT_PROPERTY_OVERRIDES += \
-	ro.kernel.ebpf.supported=false
+# This property is consumed by platform/APEX code.  Keep it in system's
+# build.prop: vendor_init is not allowed to publish the ro.kernel.* namespace
+# under SELinux enforcing, which otherwise leaves the BPF bypass disabled.
+PRODUCT_SYSTEM_PROPERTIES += \
+    ro.kernel.ebpf.supported=false
 
 # Wifi
 PRODUCT_PROPERTY_OVERRIDES += \
     wifi.interface=wlan0 \
     wifi.direct.interface=p2p-dev-wlan0 \
     net.tethering.noprovisioning=true
+
+# Fingerprint
+# The proprietary service emits three DEBUG lines every second while idle.
+# Keep INFO/WARN/ERROR diagnostics without continuously feeding logd.
+PRODUCT_PRODUCT_PROPERTIES += \
+    log.tag.bauth_FPBAuthService=I
 
 # Blur
 PRODUCT_PROPERTY_OVERRIDES += \

@@ -34,3 +34,7 @@ allow kernel device:dir create_dir_perms;
 # sysfs sec
 allow kernel sysfs_sec_key:dir r_dir_perms;
 allow kernel sysfs_sec_key:file r_file_perms;
+
+# Allow the in-kernel hall sensor consumer to traverse /sys/devices/virtual.
+# The target sec/sec_key nodes themselves use the narrower sysfs_sec_key type.
+allow kernel sysfs_virtual:dir search;

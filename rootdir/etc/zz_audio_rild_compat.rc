@@ -1,0 +1,17 @@
+# Samsung's stock RILD checks the peer's /proc/<pid>/cmdline and accepts the
+# audioserver UID only when argv[0] starts with android.hardware.audio@.
+# Keep the same executable and service credentials, changing only argv[0].
+service vendor.audio-hal /vendor/bin/hw/android.hardware.audio@7.0-service
+    override
+    class hal
+    user audioserver
+    # media gid is needed for /dev/fm and /data/misc/media (TEE).
+    group audio camera drmrpc inet media mediadrm net_bt net_bt_admin net_bw_acct wakelock context_hub system
+    capabilities BLOCK_SUSPEND SYS_NICE
+    rlimit rtprio 10 10
+    ioprio rt 4
+    task_profiles ProcessCapacityHigh HighPerformance
+    onrestart restart audioserver
+
+# The post-boot RILD reconnect action is in /system/etc/init/zz_audio_rild_sync.rc.
+# vendor_init cannot read the radio_prop used by that action's property trigger.

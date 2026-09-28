@@ -243,8 +243,8 @@ static void param_init(struct snd_pcm_hw_params *p)
 struct pcm {
     int                        fd;
     unsigned int               flags;
-    int                        running:1;
-    int                        prepared:1;
+    unsigned int               running:1;
+    unsigned int               prepared:1;
     int                        underruns;
     unsigned int               buffer_size;
     unsigned int               boundary;

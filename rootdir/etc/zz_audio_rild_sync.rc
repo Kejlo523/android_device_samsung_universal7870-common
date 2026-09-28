@@ -1,0 +1,9 @@
+# This action belongs in /system/etc/init: ril.halservice.registered.slot1 is
+# labelled radio_prop, which vendor_init cannot read. A vendor init script
+# using this property trigger is rejected while init parses it at boot.
+#
+# The legacy audio HAL does not retry its initial RILD connection until a call
+# is already under way, missing the CP clock notification needed for voice PCM.
+# Reconnect after Android boots and Samsung's first radio HAL slot is registered.
+on property:sys.boot_completed=1 && property:ril.halservice.registered.slot1=true
+    restart vendor.audio-hal

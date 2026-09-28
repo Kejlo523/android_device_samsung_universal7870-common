@@ -1,0 +1,4 @@
+# The 3.18 Exynos 7870 kernel provides the legacy android_usb gadget only.
+# Android init otherwise forces configfs for every recovery boot.
+on init
+    setprop sys.usb.configfs 0

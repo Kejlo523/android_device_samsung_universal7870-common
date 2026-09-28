@@ -1,8 +1,6 @@
 genfscon proc /device-tree u:object_r:proc_dt_firmware:s0
 
 genfscon proc /sys/vm/dirty_ratio               u:object_r:proc_vm:s0
-genfscon proc /sys/vm/dirty_bytes               u:object_r:proc_vm:s0
-genfscon proc /sys/vm/dirty_background_bytes    u:object_r:proc_vm:s0
 genfscon proc /sys/vm/min_free_kbytes           u:object_r:proc_vm:s0
 
 genfscon proc /sys/vm/swappiness                u:object_r:proc_vm:s0

@@ -1,4 +1,13 @@
 on init
+    # Exynos 7870 uses the legacy android_usb gadget, not configfs.
+    setprop sys.usb.configfs 0
+
+    # Android's AIDL USB gadget service expects the configfs descriptor link
+    # even though this device still switches functions through android_usb.
+    mkdir /config/usb_gadget/g1
+    mkdir /config/usb_gadget/g1/configs/b.1
+    symlink /config/usb_gadget/g1/configs/b.1 /config/usb_gadget/g1/os_desc/b.1
+
     write /sys/class/android_usb/android0/iSerial ${name}
     write /sys/class/android_usb/android0/f_rndis/manufacturer Samsung
     write /sys/class/android_usb/android0/f_rndis/vendorID 04e8
@@ -305,4 +314,3 @@ on property:sys.usb.ffs.ready=1 && property:sys.usb.config=mtp,conn_gadget,adb
     write /sys/class/android_usb/android0/bDeviceClass 0
     write /sys/class/android_usb/android0/enable 1
     setprop sys.usb.state ${sys.usb.config}
-

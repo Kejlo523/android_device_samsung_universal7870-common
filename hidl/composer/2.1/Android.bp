@@ -1,12 +1,11 @@
 cc_binary {
     name: "android.hardware.graphics.composer@2.1-service.universal7870",
-    stem: "android.hardware.graphics.composer@2.1-service",
     defaults: ["hidl_defaults"],
     vendor: true,
     relative_install_path: "hw",
     compile_multilib: "32",
     srcs: ["service.cpp"],
-    init_rc: ["android.hardware.graphics.composer@2.1-service.rc"],
+    init_rc: ["android.hardware.graphics.composer@2.1-service.universal7870.rc"],
     header_libs: [
         "android.hardware.graphics.composer@2.1-passthrough",
     ],

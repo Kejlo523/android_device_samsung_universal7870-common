@@ -24,11 +24,6 @@
                              samplingRates="48000" channelMasks="AUDIO_CHANNEL_OUT_STEREO"/>
                 </mixPort>
 
-                <mixPort name="fast" role="source" flags="AUDIO_OUTPUT_FLAG_FAST">
-                    <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
-                             samplingRates="48000" channelMasks="AUDIO_CHANNEL_OUT_STEREO"/>
-                </mixPort>
-
                 <mixPort name="hdmi" role="source" flags="AUDIO_OUTPUT_FLAG_MULTI_CH">
                     <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
                              samplingRates="48000" channelMasks="AUDIO_CHANNEL_OUT_STEREO,AUDIO_CHANNEL_OUT_5POINT1"/>
@@ -112,15 +107,15 @@
 
             <routes>
                 <route sink="Earpiece" type="mix"
-                       sources="primary-out,fast"/>
+                       sources="primary-out"/>
                 <route sink="Speaker" type="mix"
-                       sources="primary-out,fast"/>
+                       sources="primary-out"/>
                 <route sink="Wired Headset" type="mix"
-                       sources="primary-out,fast"/>
+                       sources="primary-out"/>
                 <route sink="Wired Headphone" type="mix"
-                       sources="primary-out,fast"/>
+                       sources="primary-out"/>
                 <route sink="Bt Sco All" type="mix"
-                       sources="primary-out,fast"/>
+                       sources="primary-out"/>
                 <route sink="Aux Device Out" type="mix"
                        sources="hdmi"/>
 
